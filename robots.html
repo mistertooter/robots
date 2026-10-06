@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Robot AI — Think, React & Walk</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 30px;
+    font-family: Arial, Helvetica, sans-serif;
+    background:
+        radial-gradient(circle at 50% 10%, #ffffff 0%, #e7edf1 45%, #c8d1d8 100%);
+    color: #000;
+}
+
+/* =========================
+   MAIN CONTAINER
+========================= */
+
+.robot-app {
+    width: min(1100px, 100%);
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    font-size: 38px;
+    margin: 0 0 8px;
+    color: #000;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 25px;
+    color: #222;
+}
+
+/* =========================
+   TOP GRID
+========================= */
+
+.main-grid {
+    display: grid;
+    grid-template-columns: 1.3fr .7fr;
+    gap: 18px;
+}
+
+/* =========================
+   ROBOT PANEL
+========================= */
+
+.robot-panel {
+    background: #eef2f5;
+    border: 2px solid #777;
+    border-radius: 22px;
+    padding: 20px;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.small-title {
+    font-size: 17px;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+#phaseTitle {
+    font-size: 30px;
+    font-weight: 900;
+    margin-top: 6px;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+}
+
+button {
+    padding: 12px 20px;
+    border: 2px solid #000;
+    border-radius: 10px;
+    background: white;
+    color: black;
+    font-size: 17px;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #d7e1e7;
+}
+
+/* =========================
+   ROBOT SCENE
+========================= */
+
+.robot-scene {
+    position: relative;
+    margin-top: 15px;
+    height: 520px;
+    overflow: hidden;
+    border-radius: 18px;
+
+    background:
+        linear-gradient(#dfe7ec, #bcc9d1);
+}
+
+.floor {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 110px;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 75px,
+            rgba(0,0,0,.12) 76px,
+            rgba(0,0,0,.12) 78px
+        ),
+        linear-gradient(#cbd5db, #9daab2);
+}
+
+/* =========================
+   SENSOR BEAMS
+========================= */
+
+.sensor-beam {
+    position: absolute;
+    width: 250px;
+    height: 3px;
+    left: 47%;
+    top: 110px;
+
+    background: #007b9e;
+
+    transform-origin: left;
+    opacity: .5;
+}
+
+.beam1 {
+    transform: rotate(-20deg);
+}
+
+.beam2 {
+    transform: rotate(0deg);
+}
+
+.beam3 {
+    transform: rotate(20deg);
+}
+
+/* =========================
+   ROBOT
+========================= */
+
+.robot {
+    position: absolute;
+    left: 45%;
+    top: 55px;
+    width: 150px;
+    height: 390px;
+
+    transform: translateX(-50%);
+}
+
+/* HEAD */
+
+.head {
+    position: absolute;
+    width: 100px;
+    height: 75px;
+
+    left: 25px;
+
+    border-radius: 25px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #5e6971,
+            #e7ecef,
+            #69747b
+        );
+
+    border: 3px solid #555;
+}
+
+.face {
+    position: absolute;
+
+    width: 72px;
+    height: 34px;
+
+    left: 12px;
+    top: 19px;
+
+    background: #172229;
+
+    border-radius: 13px;
+}
+
+.eye {
+    position: absolute;
+    top: 10px;
+
+    width: 13px;
+    height: 13px;
+
+    border-radius: 50%;
+
+    background: #39cce9;
+
+    box-shadow:
+        0 0 10px #39cce9,
+        0 0 20px #39cce9;
+}
+
+.eye.left {
+    left: 14px;
+}
+
+.eye.right {
+    right: 14px;
+}
+
+/* AI BRAIN */
+
+.brain {
+    position: absolute;
+
+    width: 42px;
+    height: 42px;
+
+    left: 54px;
+    top: -32px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            white,
+            #39cce9 30%,
+            #064d67 75%
+        );
+
+    box-shadow:
+        0 0 12px #29c7eb,
+        0 0 30px #29c7eb;
+
+    animation: brainPulse 1s infinite alternate;
+}
+
+.antenna {
+    position: absolute;
+
+    width: 4px;
+    height: 30px;
+
+    left: 73px;
+    top: -22px;
+
+    background: #333;
+}
+
+/* BODY */
+
+.body {
+    position: absolute;
+
+    width: 120px;
+    height: 135px;
+
+    left: 15px;
+    top: 90px;
+
+    border-radius: 28px 28px 20px 20px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #657078,
+            #e8edef,
+            #657078
+        );
+
+    border: 3px solid #555;
+}
+
+.core {
+    position: absolute;
+
+    width: 48px;
+    height: 48px;
+
+    left: 33px;
+    top: 35px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            white,
+            #43d2ed 35%,
+            #07526c
+        );
+
+    box-shadow:
+        0 0 20px #35c9e5;
+}
+
+/* ARMS */
+
+.arm {
+    position: absolute;
+
+    width: 25px;
+    height: 145px;
+
+    top: 105px;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #68737b,
+            #dbe1e5,
+            #68737b
+        );
+
+    transform-origin: top center;
+}
+
+.arm.left {
+    left: -10px;
+}
+
+.arm.right {
+    right: -10px;
+}
+
+/* LEGS */
+
+.leg {
+    position: absolute;
+
+    width: 32px;
+    height: 160px;
+
+    top: 220px;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #626d75,
+            #dce2e5,
+            #626d75
+        );
+
+    transform-origin: top center;
+}
+
+.leg.left {
+    left: 32px;
+}
+
+.leg.right {
+    right: 32px;
+}
+
+.foot {
+    position: absolute;
+
+    width: 55px;
+    height: 23px;
+
+    bottom: -8px;
+
+    background: #66727a;
+
+    border-radius: 12px;
+}
+
+.leg.left .foot {
+    left: -22px;
+}
+
+.leg.right .foot {
+    right: -22px;
+}
+
+/* WALKING */
+
+.walking .leg.left {
+    animation: walkLeft .65s infinite alternate ease-in-out;
+}
+
+.walking .leg.right {
+    animation: walkRight .65s infinite alternate ease-in-out;
+}
+
+.walking .arm.left {
+    animation: armLeft .65s infinite alternate ease-in-out;
+}
+
+.walking .arm.right {
+    animation: armRight .65s infinite alternate ease-in-out;
+}
+
+/* =========================
+   OBSTACLE
+========================= */
+
+.obstacle {
+    position: absolute;
+
+    right: 55px;
+    bottom: 80px;
+
+    width: 90px;
+    height: 90px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ce7164,
+            #8c3329
+        );
+
+    border: 3px solid #541a14;
+    border-radius: 10px;
+}
+
+.obstacle::after {
+    content: "OBSTACLE";
+
+    position: absolute;
+
+    width: 120px;
+
+    left: -15px;
+    bottom: -35px;
+
+    text-align: center;
+
+    color: #000;
+
+    font-size: 17px;
+    font-weight: 900;
+}
+
+/* =========================
+   DATA PARTICLES
+========================= */
+
+.data-particle {
+    position: absolute;
+
+    width: 10px;
+    height: 10px;
+
+    background: #007d9d;
+
+    border-radius: 50%;
+
+    animation: dataMove 1.4s linear infinite;
+}
+
+.p1 {
+    left: 180px;
+    top: 170px;
+}
+
+.p2 {
+    left: 220px;
+    top: 150px;
+    animation-delay: .3s;
+}
+
+.p3 {
+    left: 260px;
+    top: 130px;
+    animation-delay: .6s;
+}
+
+/* =========================
+   INFORMATION PANELS
+========================= */
+
+.info-column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.info-card {
+    background: #fff;
+
+    border: 2px solid #8b949a;
+
+    border-radius: 18px;
+
+    padding: 20px;
+}
+
+.info-title {
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.info-main {
+    margin-top: 10px;
+
+    font-size: 21px;
+    line-height: 1.4;
+
+    font-weight: 800;
+}
+
+.info-sub {
+    margin-top: 10px;
+
+    font-size: 17px;
+    line-height: 1.5;
+
+    font-weight: 700;
+}
+
+/* =========================
+   PROCESS BAR
+========================= */
+
+.compute-track {
+    margin-top: 16px;
+
+    height: 12px;
+
+    background: #d0d5d8;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+}
+
+#computeBar {
+    width: 20%;
+    height: 100%;
+
+    background: #222;
+
+    transition: width .5s ease;
+}
+
+/* =========================
+   BALANCE
+========================= */
+
+.balance-area {
+    height: 80px;
+
+    margin-top: 15px;
+
+    position: relative;
+
+    background: #e1e5e7;
+
+    border-radius: 10px;
+}
+
+.center-line {
+    position: absolute;
+
+    left: 50%;
+    top: 8px;
+
+    width: 2px;
+    height: 64px;
+
+    background: #777;
+}
+
+#balanceNeedle {
+    position: absolute;
+
+    left: 50%;
+    top: 8px;
+
+    width: 5px;
+    height: 60px;
+
+    background: black;
+
+    transform-origin: bottom;
+
+    transition: transform .5s ease;
+}
+
+/* =========================
+   WORKFLOW
+========================= */
+
+.workflow {
+    margin-top: 20px;
+
+    background: #eef2f5;
+
+    border: 2px solid #777;
+
+    border-radius: 20px;
+
+    padding: 20px;
+}
+
+.workflow-title {
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+}
+
+.flow-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(7, 1fr);
+
+    gap: 8px;
+}
+
+.stage {
+    min-height: 145px;
+
+    background: white;
+
+    border: 2px solid #9ba3a8;
+
+    border-radius: 12px;
+
+    padding: 12px;
+
+    transition: .3s;
+}
+
+.stage.active {
+    background: #ccd8df;
+    border: 3px solid #000;
+}
+
+.stage-number {
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.stage-name {
+    margin-top: 6px;
+
+    font-size: 19px;
+    font-weight: 900;
+}
+
+.stage-description {
+    margin-top: 8px;
+
+    font-size: 15px;
+    line-height: 1.35;
+
+    font-weight: 700;
+}
+
+/* =========================
+   CONTROL LOOP
+========================= */
+
+.control-loop {
+    margin-top: 15px;
+
+    padding: 17px;
+
+    background: white;
+
+    border: 2px solid #777;
+
+    border-radius: 12px;
+
+    font-size: 18px;
+    line-height: 1.5;
+
+    font-weight: 800;
+}
+
+.loop-title {
+    font-size: 19px;
+    font-weight: 900;
+}
+
+/* =========================
+   ANIMATION
+========================= */
+
+@keyframes brainPulse {
+
+    from {
+        transform: scale(.85);
+        opacity: .7;
+    }
+
+    to {
+        transform: scale(1.15);
+        opacity: 1;
+    }
+}
+
+@keyframes walkLeft {
+
+    from {
+        transform: rotate(-13deg);
+    }
+
+    to {
+        transform: rotate(13deg);
+    }
+}
+
+@keyframes walkRight {
+
+    from {
+        transform: rotate(13deg);
+    }
+
+    to {
+        transform: rotate(-13deg);
+    }
+}
+
+@keyframes armLeft {
+
+    from {
+        transform: rotate(12deg);
+    }
+
+    to {
+        transform: rotate(-12deg);
+    }
+}
+
+@keyframes armRight {
+
+    from {
+        transform: rotate(-12deg);
+    }
+
+    to {
+        transform: rotate(12deg);
+    }
+}
+
+@keyframes dataMove {
+
+    0% {
+        transform: translate(0,0);
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(160px,-60px);
+        opacity: 0;
+    }
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width: 850px) {
+
+    .main-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .flow-grid {
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="robot-app">
+
+    <h1>HOW A ROBOT THINKS, REACTS & WALKS</h1>
+
+    <div class="subtitle">
+        AI + Sensors + Decision Making + Motor Control + Feedback
+    </div>
+
+
+    <div class="main-grid">
+
+        <!-- ROBOT VISUAL -->
+
+        <div class="robot-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <div class="small-title">
+                        LIVE ROBOT CONTROL LOOP
+                    </div>
+
+                    <div id="phaseTitle">
+                        01 — SENSE
+                    </div>
+
+                </div>
+
+
+                <div class="controls">
+
+                    <button id="playButton">
+                        PAUSE
+                    </button>
+
+                    <button id="stepButton">
+                        STEP
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="robot-scene">
+
+
+                <!-- SENSOR BEAMS -->
+
+                <div class="sensor-beam beam1"></div>
+
+                <div class="sensor-beam beam2"></div>
+
+                <div class="sensor-beam beam3"></div>
+
+
+                <!-- DATA -->
+
+                <div class="data-particle p1"></div>
+                <div class="data-particle p2"></div>
+                <div class="data-particle p3"></div>
+
+
+                <!-- ROBOT -->
+
+                <div class="robot" id="robot">
+
+                    <div class="brain"></div>
+
+                    <div class="antenna"></div>
+
+
+                    <div class="head">
+
+                        <div class="face">
+
+                            <div class="eye left"></div>
+
+                            <div class="eye right"></div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="body">
+
+                        <div class="core"></div>
+
+                    </div>
+
+
+                    <div class="arm left"></div>
+
+                    <div class="arm right"></div>
+
+
+                    <div class="leg left">
+
+                        <div class="foot"></div>
+
+                    </div>
+
+
+                    <div class="leg right">
+
+                        <div class="foot"></div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="obstacle"></div>
+
+                <div class="floor"></div>
+
+            </div>
+
+        </div>
+
+
+        <!-- INFORMATION -->
+
+        <div class="info-column">
+
+
+            <div class="info-card">
+
+                <div class="info-title">
+                    ROBOT BRAIN
+                </div>
+
+                <div
+                    id="brainText"
+                    class="info-main">
+
+                    Camera + LiDAR detect obstacle
+
+                </div>
+
+
+                <div class="compute-track">
+
+                    <div id="computeBar"></div>
+
+                </div>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <div class="info-title">
+                    DECISION ENGINE
+                </div>
+
+                <div
+                    id="decisionText"
+                    class="info-main">
+
+                    Build a model of the environment
+
+                </div>
+
+
+                <div
+                    id="logicText"
+                    class="info-sub">
+
+                    Sensor data → perception → world model
+
+                </div>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <div class="info-title">
+
+                    BALANCE / IMU
+
+                    <span
+                        id="balanceValue"
+                        style="float:right">
+
+                        0.0°
+
+                    </span>
+
+                </div>
+
+
+                <div class="balance-area">
+
+                    <div class="center-line"></div>
+
+                    <div id="balanceNeedle"></div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- WORKFLOW -->
+
+    <div class="workflow">
+
+        <div class="workflow-title">
+
+            ROBOT WORKFLOW PROCESS
+
+        </div>
+
+
+        <div
+            id="flowGrid"
+            class="flow-grid">
+
+        </div>
+
+
+        <div class="control-loop">
+
+            <div class="loop-title">
+
+                CONTINUOUS CONTROL LOOP
+
+                <span
+                    id="cycleCounter"
+                    style="float:right">
+
+                    CYCLE 001
+
+                </span>
+
+            </div>
+
+
+            <br>
+
+            Sensors
+            →
+            Perception AI
+            →
+            Path Planning
+            →
+            Motor Controller
+            →
+            Joints
+            →
+            Feedback
+            →
+            Correction
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =============================
+   ROBOT AI WORKFLOW
+============================= */
+
+const stages = [
+
+    {
+        name: "SENSE",
+
+        description:
+        "Read cameras, LiDAR and body sensors.",
+
+        brain:
+        "Camera + LiDAR detect an obstacle.",
+
+        decision:
+        "Build a model of the environment.",
+
+        logic:
+        "Sensor data → perception → world model"
+    },
+
+
+    {
+        name: "THINK",
+
+        description:
+        "AI interprets objects and distance.",
+
+        brain:
+        "Neural networks analyze the sensor data.",
+
+        decision:
+        "Recognize the floor, obstacle and free space.",
+
+        logic:
+        "Pixels + depth → AI inference → object map"
+    },
+
+
+    {
+        name: "DECIDE",
+
+        description:
+        "Choose a safe movement.",
+
+        brain:
+        "The path planner calculates possible routes.",
+
+        decision:
+        "Move left and continue forward.",
+
+        logic:
+        "World model → path planning → safe trajectory"
+    },
+
+
+    {
+        name: "REACT",
+
+        description:
+        "Respond to hazards immediately.",
+
+        brain:
+        "Safety controller detects collision risk.",
+
+        decision:
+        "Slow down and redirect the foot.",
+
+        logic:
+        "Hazard → reflex controller → correction"
+    },
+
+
+    {
+        name: "BALANCE",
+
+        description:
+        "Keep the body upright.",
+
+        brain:
+        "IMU measures body tilt and acceleration.",
+
+        decision:
+        "Shift the robot's center of mass.",
+
+        logic:
+        "Gyroscope + accelerometer → balance controller"
+    },
+
+
+    {
+        name: "WALK",
+
+        description:
+        "Coordinate the robot's joints.",
+
+        brain:
+        "Calculate hip, knee and ankle positions.",
+
+        decision:
+        "Execute the walking gait.",
+
+        logic:
+        "Trajectory → inverse kinematics → motor torque"
+    },
+
+
+    {
+        name: "LEARN",
+
+        description:
+        "Improve the next movement.",
+
+        brain:
+        "Compare expected movement with actual movement.",
+
+        decision:
+        "Update the robot's internal control model.",
+
+        logic:
+        "Target − actual state → error → adaptation"
+    }
+
+];
+
+
+/* =============================
+   ELEMENTS
+============================= */
+
+const flowGrid =
+document.getElementById("flowGrid");
+
+const phaseTitle =
+document.getElementById("phaseTitle");
+
+const brainText =
+document.getElementById("brainText");
+
+const decisionText =
+document.getElementById("decisionText");
+
+const logicText =
+document.getElementById("logicText");
+
+const computeBar =
+document.getElementById("computeBar");
+
+const robot =
+document.getElementById("robot");
+
+const balanceNeedle =
+document.getElementById("balanceNeedle");
+
+const balanceValue =
+document.getElementById("balanceValue");
+
+const cycleCounter =
+document.getElementById("cycleCounter");
+
+const playButton =
+document.getElementById("playButton");
+
+const stepButton =
+document.getElementById("stepButton");
+
+
+/* =============================
+   CREATE WORKFLOW CARDS
+============================= */
+
+stages.forEach((stage,index) => {
+
+    const card =
+    document.createElement("div");
+
+
+    card.className =
+    "stage";
+
+
+    card.innerHTML = `
+
+        <div class="stage-number">
+            0${index + 1}
+        </div>
+
+        <div class="stage-name">
+            ${stage.name}
+        </div>
+
+        <div class="stage-description">
+            ${stage.description}
+        </div>
+
+    `;
+
+
+    card.addEventListener(
+        "click",
+        () => {
+
+            currentStage = index;
+
+            updateRobot();
+
+        }
+    );
+
+
+    flowGrid.appendChild(card);
+
+});
+
+
+/* =============================
+   ROBOT STATE
+============================= */
+
+let currentStage = 0;
+
+let cycle = 1;
+
+let playing = true;
+
+let timer;
+
+
+/* =============================
+   UPDATE ROBOT
+============================= */
+
+function updateRobot() {
+
+    const stage =
+    stages[currentStage];
+
+
+    phaseTitle.textContent =
+    `0${currentStage + 1} — ${stage.name}`;
+
+
+    brainText.textContent =
+    stage.brain;
+
+
+    decisionText.textContent =
+    stage.decision;
+
+
+    logicText.textContent =
+    stage.logic;
+
+
+    /* AI COMPUTATION LEVEL */
+
+    computeBar.style.width =
+    `${20 + currentStage * 12}%`;
+
+
+    /* ACTIVE WORKFLOW CARD */
+
+    document
+    .querySelectorAll(".stage")
+    .forEach((card,index) => {
+
+        card.classList.toggle(
+            "active",
+            index === currentStage
+        );
+
+    });
+
+
+    /* WALK ANIMATION */
+
+    if (
+        stage.name === "WALK" ||
+        stage.name === "BALANCE"
+    ) {
+
+        robot.classList.add("walking");
+
+    }
+
+    else {
+
+        robot.classList.remove("walking");
+
+    }
+
+
+    /* BALANCE SIMULATION */
+
+    let angle = 0;
+
+
+    if(stage.name === "BALANCE") {
+
+        angle = -6;
+
+    }
+
+
+    if(stage.name === "WALK") {
+
+        angle = 4;
+
+    }
+
+
+    balanceNeedle.style.transform =
+
+        `translateX(-50%)
+         rotate(${angle * 3}deg)`;
+
+
+    balanceValue.textContent =
+
+        `${angle > 0 ? "+" : ""}
+        ${angle.toFixed(1)}°`;
+
+
+    cycleCounter.textContent =
+
+        "CYCLE " +
+        String(cycle).padStart(3,"0");
+
+}
+
+
+/* =============================
+   NEXT PROCESS
+============================= */
+
+function nextStage() {
+
+    currentStage++;
+
+
+    if(currentStage >= stages.length) {
+
+        currentStage = 0;
+
+        cycle++;
+
+    }
+
+
+    updateRobot();
+
+}
+
+
+/* =============================
+   AUTOMATIC CONTROL LOOP
+============================= */
+
+function startRobot() {
+
+    clearInterval(timer);
+
+
+    if(playing) {
+
+        timer =
+        setInterval(
+            nextStage,
+            2200
+        );
+
+    }
+
+}
+
+
+/* =============================
+   PLAY / PAUSE
+============================= */
+
+playButton.addEventListener(
+    "click",
+    () => {
+
+        playing =
+        !playing;
+
+
+        playButton.textContent =
+        playing
+        ? "PAUSE"
+        : "PLAY";
+
+
+        startRobot();
+
+    }
+);
+
+
+/* =============================
+   MANUAL STEP
+============================= */
+
+stepButton.addEventListener(
+    "click",
+    () => {
+
+        playing = false;
+
+        playButton.textContent =
+        "PLAY";
+
+        clearInterval(timer);
+
+        nextStage();
+
+    }
+);
+
+
+/* =============================
+   START
+============================= */
+
+updateRobot();
+
+startRobot();
+
+</script>
+
+</body>
+</html>
